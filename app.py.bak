@@ -4,22 +4,7 @@ from queue import Empty
 import requests,re
 from bs4 import BeautifulSoup
 
-def kakao_data(information_data):
 
-    data = {
-            "version" : "2.0",
-            "template" : {
-                "outputs" : [
-                    {
-                        "simpleText" : {
-                            "text" : information_data
-                        }
-                    }
-                ]
-            }
-        }
-
-    return data
 
 def food():
     url = 'https://www.tu.ac.kr/tuhome/diet.do'
@@ -32,8 +17,8 @@ def food():
         try:
             list = soup.select_one("table").find_all(text=True)
         except:
-            print('식단 업데이트가 되지 않는 날입니다.')
-            return '식단 업데이트가 되지 않는 날입니다.'
+            print('식단 업데이트가 되지 않은 날입니다.')
+            return '식단 업데이트가 되지 않은 날입니다.'            
 
         while '\n' in list:
             list.remove('\n')
@@ -64,7 +49,6 @@ def food():
         print('학교 홈페이지 문제 발생')
         return '학교 홈페이지 문제 발생'
 
-
 app = Flask(__name__)
 
 @app.route('/message', methods=['POST'])
@@ -72,17 +56,20 @@ def Message():
     content = request.get_json()
     content = content['userRequest']['utterance']
     content=content.replace("\n","")
-    
     print(content)
-
     if content == "오늘의 학식":
-        dataSend = kakao_data(food())
-    elif content == "학교 공지":
-        pass
-    elif content == "실시간 인기 검색어":
-        pass
-    elif content == "실시간 주요 뉴스":
-        pass
+        dataSend = {
+            "version" : "2.0",
+            "template" : {
+                "outputs" : [
+                    {
+                        "simpleText" : {
+                            "text" : food()
+                        }
+                    }
+                ]
+            }
+        }
     else:
         dataSend = {
             "version" : "2.0",

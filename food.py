@@ -2,6 +2,7 @@ from queue import Empty
 import requests,re
 from bs4 import BeautifulSoup
 
+
 def food():
     url = 'https://www.tu.ac.kr/tuhome/diet.do'
 
@@ -10,11 +11,11 @@ def food():
     if response.status_code == 200:
         html = response.text
         soup = BeautifulSoup(html, 'html.parser')
-        list = soup.select_one("table").find_all(text=True)
-
-        if(len(list) == 0):
+        try:
+            list = soup.select_one("table").find_all(text=True)
+        except:
             print('식단 업데이트가 되지 않은 날입니다.')
-            return '식단 업데이트가 되지 않은 날입니다.'
+            return '식단 업데이트가 되지 않은 날입니다.'            
 
         while '\n' in list:
             list.remove('\n')
@@ -44,3 +45,5 @@ def food():
     else : 
         print('학교 홈페이지 문제 발생')
         return '학교 홈페이지 문제 발생'
+
+food()
