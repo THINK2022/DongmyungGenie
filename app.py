@@ -5,7 +5,6 @@ import requests,re
 from bs4 import BeautifulSoup
 
 def kakao_data(information_data):
-
     data = {
             "version" : "2.0",
             "template" : {
@@ -33,7 +32,7 @@ def food():
             list = soup.select_one("table").find_all(text=True)
         except:
             print('식단 업데이트가 되지 않는 날입니다.')
-            return '식단 업데이트가 되지 않는 날입니다.'
+            return '식단 업데이트가 되지 않는 날입니다.(주말/공휴일)'
 
         while '\n' in list:
             list.remove('\n')
