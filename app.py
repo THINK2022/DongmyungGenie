@@ -1,8 +1,10 @@
+from urllib import response
 from flask import Flask, json, request, jsonify
 import sys
 from queue import Empty
 import requests,re
 from bs4 import BeautifulSoup
+requests.packages.urllib3.disable_warnings(requests.packages.urllib3.exceptions.InsecureRequestWarning)
 
 def kakao_data(information_data):
     data = {
@@ -92,7 +94,7 @@ def cup_food():
     딸기와플 - 3,000
     햄에그샌드위치 - 4,000
     햄치즈샌드위치 - 4,500
-    
+
 [음료/기타]
     콜라(190ml) - 1,000
     사이다(190ml) - 1,000
@@ -109,7 +111,7 @@ def cup_food():
 
 def china_food():
     menu = '''[메뉴]
-    짜장면 - 4,500
+    짜장면 4,500
     짜장면 곱배기 - 5,500
     우동 - 5,000
     우동 곱배기 - 7,000
@@ -128,11 +130,11 @@ def china_food():
     미니깡풍육 - 12,000
 
 [세트]
-    베이징A세트(짜장면2, 미니탕수육) - 17,000
-    베이징B세트(짜장면1, 짬뽕1, 미니탕수육) - 19,000
-    베이징C세트(짬뽕2 + 미니탕수육) - 21,000
-    스토리A세트(짜장2 + 깐풍육) - 20,000
-    스토리B세트(짜장1 + 짬뽕1 + 깐풍육) - 21,000
+    베이징A세트(짜장면2+미니탕수육) - 17,000
+    베이징B세트(짜장면1+짬뽕1+미니탕수육) - 19,000
+    베이징C세트(짬뽕2+미니탕수육) - 21,000
+    스토리A세트(짜장2+깐풍육) - 20,000
+    스토리B세트(짜장1+짬뽕1+깐풍육) - 21,000
     스토리C세트(짬뽕2+깐풍육) - 23,000
 
 [음료/기타]
@@ -142,6 +144,36 @@ def china_food():
     print(menu)
 
     return menu
+
+def notice():
+    url = "https://www.tu.ac.kr/tuhome/sub07_01_01.do"
+    response = requests.get(url, verify=False)
+    
+
+    if response.status_code == 200:
+        html = response.text
+        soup = BeautifulSoup(html, "html.parser")
+
+        try:
+            notices = soup.find_all("td", attrs={"class":"subject"})
+        except:
+            print('등록 페이지에 글이 없습니다.')
+            return '등록 페이지에 글이 없습니다.'
+    
+        i = 1
+        str1 = '[학교 공지]\n\n'
+        for notice in notices:
+            title = notice.get_text().strip()
+            link = notice.find("a")["href"]
+            str1 += "["+str(i)+"] "+title+'\n'
+            str1 += url+link+'\n\n'
+            i = i+1
+        
+        print(str1.strip())
+        return str1.strip()
+    else:
+        print('학교 홈페이지 문제 발생')
+        return '학교 홈페이지 문제 발생'
 
 app = Flask(__name__)
 
@@ -159,12 +191,14 @@ def Message():
         dataSend = kakao_data(cup_food())
     elif content == "베이징스토리":
         dataSend = kakao_data(china_food())
-    elif content == "실시간 주요 뉴스":
+    elif content == "포썸":
         pass
-    elif content == "동명대 기숙사":
+    elif content == "맘스터치":
+        pass
+    elif content == "동명기숙사 식단":
         pass
     elif content == "학교 공지":
-        pass
+        dataSend = notice()
     else:
         dataSend = {
             "version" : "2.0",
