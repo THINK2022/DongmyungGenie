@@ -198,7 +198,7 @@ def Message():
     elif content == "동명기숙사 식단":
         pass
     elif content == "학교 공지":
-        dataSend = notice()
+        dataSend = kakao_data(notice())
     else:
         dataSend = {
             "version" : "2.0",
