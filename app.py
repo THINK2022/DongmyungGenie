@@ -175,6 +175,40 @@ def notice():
         print('학교 홈페이지 문제 발생')
         return '학교 홈페이지 문제 발생'
 
+def tu_cal():
+    url = "https://www.tu.ac.kr/tuhome/scheduleTable.do"
+    response = requests.get(url, verify=False)
+    
+
+    if response.status_code == 200:
+        html = response.text
+        soup = BeautifulSoup(html, "html.parser")
+
+        try:
+            notices = soup.find_all("tr", attrs={"class":"notice"})
+        except:
+            print('등록 페이지에 글이 없습니다.')
+            return '등록 페이지에 글이 없습니다.'
+    
+        #print(notices)
+
+        str1='학시일정 \n'
+        for notice in notices:
+            try:
+                month = '\n'+'['+notice.find('th').get_text().strip()+'] \n'
+                str1+=month
+            except:
+                pass
+            finally:
+                event = notice.select('td')[0].get_text()+' - '+notice.select('td')[1].get_text()+'\n'
+                str1+=event
+
+        print(str1.strip())
+        return str1.strip()
+    else:
+        print('학교 홈페이지 문제 발생')
+        return '학교 홈페이지 문제 발생'
+
 app = Flask(__name__)
 
 @app.route('/message', methods=['POST'])
@@ -197,8 +231,10 @@ def Message():
         pass
     elif content == "동명기숙사 식단":
         pass
-    elif content == "학교 공지":
+    elif content == "학교공지":
         dataSend = kakao_data(notice())
+    elif content == "학사일정":
+        dataSend = kakao_data(tu_cal())
     else:
         dataSend = {
             "version" : "2.0",
