@@ -64,6 +64,31 @@ def food():
     else : 
         print('학교 홈페이지 문제 발생')
         return '학교 홈페이지 문제 발생'
+def dorm_food():
+    url = 'https://tu.ac.kr/dormitory/index.do'
+
+    response = requests.get(url, verify=False)
+
+    if response.status_code == 200:
+        html = response.text
+        soup = BeautifulSoup(html, 'html.parser')
+        try:
+            alert = soup.select("li.item")
+        except:
+            print('식단 업데이트가 되지 않는 날입니다.')
+            return '식단 업데이트가 되지 않는 날입니다.'
+
+        string = ''
+        for i in alert:
+            string += i.get_text()
+
+        return string.strip()
+
+    else:
+        print('학교 홈페이지 문제 발생')
+        return '학교 홈페이지 문제 발생'
+
+
 
 def cup_food():
     menu = '''[컵밥]
@@ -161,7 +186,7 @@ def notice():
             return '등록 페이지에 글이 없습니다.'
     
         i = 1
-        str1 = '[학교 공지]\n\n'
+        str1 = '[학교공지]\n\n'
         for notice in notices:
             title = notice.get_text().strip()
             link = notice.find("a")["href"]
@@ -230,7 +255,7 @@ def Message():
     elif content == "맘스터치":
         pass
     elif content == "동명기숙사 식단":
-        pass
+        dataSend == kakao_data(dorm_food())
     elif content == "학교공지":
         dataSend = kakao_data(notice())
     elif content == "학사일정":
