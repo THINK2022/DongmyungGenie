@@ -64,6 +64,7 @@ def food():
     else : 
         print('학교 홈페이지 문제 발생')
         return '학교 홈페이지 문제 발생'
+
 def dorm_food():
     url = 'https://tu.ac.kr/dormitory/index.do'
 
@@ -87,7 +88,6 @@ def dorm_food():
     else:
         print('학교 홈페이지 문제 발생')
         return '학교 홈페이지 문제 발생'
-
 
 
 def cup_food():
@@ -254,7 +254,7 @@ def Message():
         pass
     elif content == "맘스터치":
         pass
-    elif content == "동명기숙사 식단":
+    elif content == "오늘의 기숙사 식단":
         dataSend == kakao_data(dorm_food())
     elif content == "학교공지":
         dataSend = kakao_data(notice())
@@ -267,7 +267,7 @@ def Message():
                 "outputs" : [
                     {
                         "simpleText" : {
-                            "text" : 'error'
+                            "text" : '없는 키워드 입니다.'
                         }
                     }
                 ]
